@@ -213,12 +213,25 @@ namespace linalg
 		return true;
 	}
 
+	bool InverseD(const Matrix& D, Matrix& I)
+	{
+		if (!D.IsSquare()) return false;
+		I = Matrix(D);
+		for (size_t i = 0; i < I.RowsNumber(); ++i)
+		{
+			if (I(i, i) < 1e-15) return false;
+			I(i, i) = 1 / I(i, i);
+		}
+		return true;
+	}
+
 	Matrix AxD(const Matrix& A, const Matrix& D)
 	{
 		size_t nRows = A.RowsNumber(),
 			nCols = D.ColsNumber(),
 			m, n;
-		if (A.ColsNumber() != nCols) throw "The matrices are not consistent!";
+		if (A.ColsNumber() != nCols) 
+			throw std::exception("Inconsistent dimensions!");
 		Matrix M(A);
 		for (m = 0; m < nRows; ++m)
 			for (n = 0; n < nCols; ++n)
@@ -231,7 +244,8 @@ namespace linalg
 		size_t nRows = D.RowsNumber(),
 			nCols = A.ColsNumber(),
 			m, n;
-		if (nRows != A.RowsNumber()) throw "The matrices are not consistent!";
+		if (nRows != A.RowsNumber()) 
+			throw std::exception("Inconsistent dimensions!");
 		Matrix M(A);
 		for (m = 0; m < nRows; ++m)
 			for (n = 0; n < nCols; ++n)

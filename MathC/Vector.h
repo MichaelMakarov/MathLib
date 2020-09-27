@@ -3,7 +3,7 @@
 #include "Enumerable.h"
 
 // представление математического вектора 
-class Vector : public Enumerable
+class Vector : public Enumerable<double>
 {
 private:
 	double* v_pValues;						// массив значений
@@ -14,28 +14,21 @@ protected:
 	void Invalidate() override;
 
 public:
-	// конструктор по-умолчанию
+	// Создание нулевого вектора заданной размерности.
 	Vector(const size_t size = 3); 
-	// конструктор с заданием значений
+	// Создание вектора заданной размерности с заданием значений координат.
 	Vector(
-		const size_t size,					// размер				
-		const double* const pArray);		// массив значений
+		const size_t size,				
+		const double* const pArray);
 	// конструктор копирования
 	Vector(const Vector& vector);
-	// копирование среза элементов
+	// Создание вектора заданной размерности с заданием значений координат.
 	Vector(
-		const Vector& vector,				// исходный вектор
-		int firstIndex,						// индекс первого элемента
-		int lastIndex);						// индекс последнего элемента
-	// конструктор на основе задания значений
-	Vector(
-		const size_t size,					// размер вектора
-		const double value,					// первое значение инициализации
-		...);								// следующие значения для инициализации
-	// конструктор на основе списка
-	Vector(
-		std::initializer_list<double> values// список значений
-	);
+		const size_t size,
+		const double value,
+		...);
+	// Создание вектора через список значений координат.
+	Vector(std::initializer_list<double> values);
 	// деструктор
 	~Vector();
 
@@ -83,9 +76,8 @@ public:
 	static Vector Ones(const size_t size);
 
 	// итератор на первый элемент
-	Iterator& begin() { return e_iterFirst; }
+	Iterator<double>& begin() { return e_iterFirst;	}
 	// итератор на конец
-	Iterator& end() { return e_iterLast; }
-
+	Iterator<double>& end() { return e_iterLast; }
 };
 

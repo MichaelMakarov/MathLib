@@ -5,13 +5,13 @@
 
 void Vector::Invalidate()
 {
-	e_iterFirst = Iterator(v_pValues);
+	e_iterFirst = Iterator<double>(v_pValues);
 	e_iterLast = e_iterFirst + v_size;
 }
 
 Vector::Vector(const size_t size)
 {
-	if (size == 0) throw "The size of the vector can not be zero!";
+	if (size == 0) throw std::exception("Invalid size!");
 	v_size = size;
 	v_pValues = new double[v_size];
 	std::memset(v_pValues, 0, v_size * DOUBLE_SIZE);
@@ -20,8 +20,8 @@ Vector::Vector(const size_t size)
 
 Vector::Vector(const size_t size, const double* const pArray)
 {
-	if (size == 0) throw "Invalid size!";
-	if (!pArray) throw "The array can not be null!";
+	if (size == 0) throw std::exception("Invalid size!");
+	if (!pArray) throw std::exception("Invalid array!");
 	v_size = size;
 	v_pValues = new double[v_size];
 	std::memcpy(v_pValues, pArray, v_size * DOUBLE_SIZE);
@@ -36,24 +36,10 @@ Vector::Vector(const Vector& vector)
 	Invalidate();
 }
 
-Vector::Vector(const Vector& vector, int firstIndex, int lastIndex)
-{
-	int size = static_cast<int>(vector.v_size);
-	if (firstIndex >= size || lastIndex >= size) throw "Invalid indices!";
-	if (firstIndex < 0) firstIndex += size;
-	if (lastIndex < 0) lastIndex += size;
-	if (firstIndex < 0 || lastIndex < 0) throw "Invalid indices!";
-	if (firstIndex > lastIndex) throw "First index should be less than the last one!";
-
-	v_size = lastIndex - firstIndex + 1;
-	v_pValues = new double[v_size];
-	std::memcpy(v_pValues, &vector.v_pValues[firstIndex], v_size * DOUBLE_SIZE);
-}
-
 Vector::Vector(const size_t size, const double value, ...)
 {
 	va_list args;
-	if (size == 0) throw "Invalid size!";
+	if (size == 0) throw std::exception("Invalid size!");
 	__crt_va_start(args, value);
 	v_size = size;
 	v_pValues = new double[v_size];
@@ -61,15 +47,17 @@ Vector::Vector(const size_t size, const double value, ...)
 	for (size_t i = 1; i < size; ++i)
 		v_pValues[i] = __crt_va_arg(args, double);
 	__crt_va_end(args);
+	Invalidate();
 }
 
 Vector::Vector(std::initializer_list<double> values)
 {
-	if (values.size() == 0) throw "The list of values has invalid size!";
+	if (values.size() == 0) throw std::exception("Invalid number of values!");
 	v_size = values.size();
 	v_pValues = new double[v_size];
 	size_t i = 0;
 	for (auto v : values) v_pValues[i++] = v;
+	Invalidate();
 }
 
 Vector::~Vector()
@@ -110,14 +98,14 @@ const char* Vector::ToString() const
 
 double& Vector::operator[](const size_t index) const
 {
-	if (index >= v_size) throw "Invalid index!";
+	if (index >= v_size) throw std::exception("Invalid index!");
 	return v_pValues[index];
 }
 
 double& Vector::Get(int index) const
 {
 	if (index < 0) index += v_size;
-	if (index > v_size || index < 0) throw "Invalid index!";
+	if (index > v_size || index < 0) throw std::exception("Invalid index!");
 	return v_pValues[index];
 }
 
@@ -182,7 +170,7 @@ Vector& Vector::operator*=(double number)
 
 Vector& Vector::operator/=(double number)
 {
-	if (abs(number) < 1e-16) throw "The number is equal to zero!";
+	if (abs(number) < 1e-16) throw std::exception("Invalid number to divide!");
 	for (size_t i = 0; i < v_size; ++i)
 		v_pValues[i] /= number;
 	return *this;

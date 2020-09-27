@@ -2,11 +2,11 @@
 #include "Vector.h"
 
 // представление матрицы
-class Matrix : public Enumerable
+class Matrix : public Enumerable<double>
 {
 private:
 	double* m_pValues;							// массив со значениями
-	size_t m_nRows;								// количсетво строк
+	size_t m_nRows;								// количество строк
 	size_t m_nCols;								// количество столбцов
 
 protected:
@@ -14,34 +14,27 @@ protected:
 	void Invalidate() override;
 
 public:
-	// конструктор по умолчанию (матрица из нулей)
+	// Создание матрицы из нулей заданной размерности.
 	Matrix(
-		const size_t nRows = 3,					// количество строк
-		const size_t nCols = 3);				// количество столбцов
-	// конструктор с копированием эелементов из одномерного массива
+		const size_t nRows = 3,
+		const size_t nCols = 3);
+	// Создание матрицы заданной размерности с заданием значений её элементов.
 	Matrix(
-		const size_t nRows,						// количество строк
-		const size_t nCols,						// количество столбцов
-		const double* const pValues);			// массив со значениями для матрицы
+		const size_t nRows,
+		const size_t nCols,
+		const double* const pValues);
 	// конструктор копирования параметров и значений матрицы
 	Matrix(const Matrix& matrix);
-	// копирование среза матрицы по строкам и столбцам, включая последние элементы
+	// Создание матрицы заданной размерности с заданием значений её элементов.
 	Matrix(
-		const Matrix& matrix,					// матрица
-		int firstRowIndex,						// индекс первой строки
-		int lastRowIndex,						// индекс последней строки
-		int firstColIndex,						// индекс первого столбца
-		int lastColIndex);						// индекс последнего столбца
-	// конструктор на основе непосредственного задания элементов
+		const size_t nRows,
+		const size_t nCols,
+		const double value,
+		...);
+	// Создание матрицы заданной размерности на основе списка значений её элементов.
 	Matrix(
-		const size_t nRows,						// количество строк
-		const size_t nCols,						// количество столбцов
-		const double value,						// первое значение инициализации
-		...);									// следующие значения инициализации
-	// конструктор на основе списка
-	Matrix(
-		const size_t nRows,						// количество строк
-		const size_t nCols,						// количество столбцов
+		const size_t nRows,
+		const size_t nCols,
 		const std::initializer_list<double> values);
 	// деструктор
 	~Matrix();
@@ -118,8 +111,8 @@ public:
 	static Matrix Identity(size_t size);
 
 	// итератор на первый элемент матрицы
-	Iterator& begin() { return e_iterFirst; }
+	Iterator<double>& begin() { return e_iterFirst; }
 	// итератор на конец
-	Iterator& end() { return e_iterLast; }
+	Iterator<double>& end() { return e_iterLast; }
 };
 

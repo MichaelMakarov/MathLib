@@ -4,12 +4,14 @@
 #include "../MathC/Matrix.h"
 #include "../MathC/LinearAlgebra.h"
 #include "../MathC/Numerics.h"
+#include "../MathC/Filtering.h"
 
 void TestVector();
 void TestMatrix();
 void TestPolynom();
 void TestLinalg();
 void TestNumerics();
+void TestFiltering();
 
 int main()
 {
@@ -24,6 +26,8 @@ int main()
 	TestPolynom();
 	std::cout << "\n...Numerics...\n\n";
 	TestNumerics();
+	std::cout << "\n...Filtering...\n\n";
+	TestFiltering();
 
 	return 0;
 }
@@ -43,17 +47,6 @@ void TestVector()
 	// создание через конструктор копирования
 	Vector v4(v2);
 	std::cout << "v4: " << v4.ToString() << std::endl;
-	// создание через конструктор копирования с заданием диапазона копирования
-	Vector v5(v4, 1, -2);
-	std::cout << "v5: " << v5.ToString() << std::endl;
-	try {
-		Vector v6(v2, 5, -8);
-		std::cout << "v6: " << v6.ToString() << std::endl;
-	}
-	catch (const char* ex)
-	{
-		std::cout << "Error! " << ex << std::endl;
-	}
 	// создание через инициализацию элементами в конструкторе
 	Vector v8(7, 4.5, 2.1, 3.3, 7.89, 3.4, 0.9, 1.1);
 	std::cout << "v8: " << v8.ToString() << std::endl;
@@ -62,9 +55,9 @@ void TestVector()
 	std::cout << "v9: " << v9.ToString() << std::endl;
 
 	// скалярное произведение
-	std::cout << "v2 * v5: " << v2 * v5 << std::endl;
+	std::cout << "v2 * v5: " << v2 * v8 << std::endl;
 	// умножение на константу
-	std::cout << "v5 * 8: " << (v5 * 8.0).ToString() << std::endl;
+	std::cout << "v5 * 8: " << (v9 * 8.0).ToString() << std::endl;
 	// деление на константу
 	v3 /= 2.0;
 	std::cout << "v3 /= 2.0: " << v3.ToString() << std::endl;
@@ -82,7 +75,7 @@ void TestVector()
 	std::cout << "v2(-4) = " << v2.Get(-4) << std::endl;
 	// итерирование
 	std::cout << "Iterating throw v4: ";
-	for (Iterator& iter = v4.begin(); iter != v4.end(); ++iter)
+	for (auto& iter = v4.begin(); iter != v4.end(); ++iter)
 		std::cout << *iter << std::ends;
 	std::cout << std::endl;
 	// единичный вектор
@@ -106,11 +99,6 @@ void TestMatrix()
 	// создание через копирование
 	Matrix m4(m3);
 	std::cout << "m4:\n" << m4.ToString() << std::endl;
-	// копирование с заданием диапазонов
-	Matrix m5(m4, -1, 2, 2, 2);
-	std::cout << "m5:\n" << m5.ToString() << std::endl;
-	Matrix m6(m2, 0, -1, -2, -1);
-	std::cout << "m6:\n" << m6.ToString() << std::endl;
 	// проверка, является ли матрица квадратной
 	std::cout << "m2 is square: " << m2.IsSquare() << std::endl;
 	std::cout << "m3 is square: " << m3.IsSquare() << std::endl;
@@ -125,9 +113,9 @@ void TestMatrix()
 	try {
 		std::cout << "m2 - m3:\n" << (m2 - m3).ToString() << std::endl;
 	}
-	catch (const char* ex)
+	catch (const std::exception& ex)
 	{
-		std::cout << ex << std::endl;
+		std::cout << ex.what() << std::endl;
 	}
 	// умножение на вектор
 	Vector v = Vector::Ones(3);
@@ -151,8 +139,7 @@ void TestMatrix()
 	std::cout << "m8 is diagonal: " << m8.IsDiagonal() << std::endl;
 	// итераторы
 	std::cout << "m8:\n";
-	for (auto iter = m8.begin(); iter != m8.end(); ++iter)
-		std::cout << *iter << std::ends;
+	for (auto& v : m8) std::cout << v << std::ends;
 	std::cout << std::endl;
 }
 
@@ -277,4 +264,39 @@ void TestNumerics()
 			std::cout << p[i] << std::ends;
 	}
 	std::cout << std::endl;
+}
+
+void TestFiltering()
+{
+	double dt = 0.1;
+	std::vector<Vector> measurements({
+			Vector(1, 0.01),	// 0.1
+			Vector(1, 0.02),	// 0.23
+			Vector(1, 0.049),	// 0.32
+			Vector(1, 0.091),	// 0.44
+			Vector(1, 0.14),	// 0.51
+			Vector(1, 0.19),	// 0.62
+			Vector(1, 0.27),	// 0.72
+			Vector(1, 0.33)		// 0.79
+		}), filtered;
+	Vector Bu({ dt * dt * 0.5, dt }),
+		X0({ 0.0, 0.0 });
+	Matrix F(2, 2, { 1, dt, 0, 1 }),
+		H(1, 2, { 1, 0 }),
+		R(1, 1, 0.25),
+		Q(2, 2, { Bu[0] * Bu[0], Bu[1] * Bu[0], Bu[1] * Bu[0], Bu[1] * Bu[1] }),
+		P0(2, 2, 10., 0., 0., 10.);
+
+	for (auto& v : F) std::cout << v << std::ends;
+	std::cout << std::endl;
+	Q *= 0.16;
+	filter::KalmanFilter f(X0, P0);
+	f.SetModel(F, H, Q, R);
+	if (!f.Filter(measurements, Bu, filtered)) std::cout << "Failed tp filter!\n";
+	else {
+		for (auto& m : measurements) std::cout << m.ToString() << std::ends;
+		std::cout << std::endl;
+		for (auto& v : filtered) std::cout << v.ToString() << std::ends;
+		std::cout << std::endl;
+	}
 }

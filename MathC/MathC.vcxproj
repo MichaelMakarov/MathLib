@@ -45,7 +45,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -74,12 +74,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)dll\Lib\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)dll\Lib\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -140,6 +142,7 @@
   <ItemGroup>
     <ClCompile Include="Complex.cpp" />
     <ClCompile Include="Enumerable.cpp" />
+    <ClCompile Include="Filtering.cpp" />
     <ClCompile Include="Iterator.cpp" />
     <ClCompile Include="LinearAlgebra.cpp" />
     <ClCompile Include="Matrix.cpp" />
@@ -151,6 +154,7 @@
     <ClInclude Include="Complex.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Enumerable.h" />
+    <ClInclude Include="Filtering.h" />
     <ClInclude Include="Iterator.h" />
     <ClInclude Include="LinearAlgebra.h" />
     <ClInclude Include="Matrix.h" />

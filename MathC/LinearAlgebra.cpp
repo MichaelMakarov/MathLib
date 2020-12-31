@@ -322,5 +322,40 @@ namespace linalg
 			X[m] = M(m, nRows) / M(m, m);
 		return true;
 	}
+	bool RotateVector(const Vector& P, const Vector& V, const double angle, Vector& R)
+	{
+		if (V.Size() != 3 || P.Size() != 3) return false;
+
+		bool isZero = true;
+		size_t i;
+		for (i = 0; i < 3; ++i)
+			if (V[i] >= 1e-16)
+			{
+				isZero = false;
+				break;
+			}
+		if (isZero) return false;
+
+		isZero = true;
+		for (i = 0; i < 3; ++i)
+			if (P[i] >= 1e-16)
+			{
+				isZero = false;
+				break;
+			}
+		if (isZero || angle <= 1e-16)
+		{
+			R = P;
+			return true;
+		}
+
+		const double o = angle / 2;
+		const double sino = sin(o);
+		Quaternion q(cos(o), sino * V[0], sino * V[1], sino * V[2]),
+			p(0.0, P[0], P[1], P[2]),
+			r = q * p * q.Inverse();
+		R = r.Im();
+		return true;
+	}
 }
 

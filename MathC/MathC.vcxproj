@@ -147,7 +147,9 @@
     <ClCompile Include="LinearAlgebra.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Numerics.cpp" />
+    <ClCompile Include="Operations.cpp" />
     <ClCompile Include="Polynom.cpp" />
+    <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,7 +161,9 @@
     <ClInclude Include="LinearAlgebra.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Numerics.h" />
+    <ClInclude Include="Operations.h" />
     <ClInclude Include="Polynom.h" />
+    <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

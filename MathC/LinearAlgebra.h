@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Matrix.h"
+#include "Quaternion.h"
 
 namespace linalg
 {
@@ -106,4 +107,16 @@ namespace linalg
 		const Matrix& A,
 		const Vector& B,
 		Vector& X);	
+
+	// Вращение вектора против часовой стрелки относительно оси на заданный угол.
+	// P - исходный вектор.
+	// V - направляющий вектор оси вращения (единичный вектор).
+	// angle - угол вращения в рад.
+	// Вектор - результат вращения.
+	// true, если расчёт прошёл без ошибок.
+	bool RotateVector(
+		const Vector& P,
+		const Vector& V,
+		const double angle,
+		Vector& R);
 }

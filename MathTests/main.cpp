@@ -1,10 +1,12 @@
 ﻿#include <iostream>
 #include <random>
+#include "Timer.h"
 #include "../MathC/Vector.h"
 #include "../MathC/Matrix.h"
 #include "../MathC/LinearAlgebra.h"
 #include "../MathC/Numerics.h"
 #include "../MathC/Filtering.h"
+#include "../MathC/Operations.h"
 
 void TestVector();
 void TestMatrix();
@@ -12,6 +14,7 @@ void TestPolynom();
 void TestLinalg();
 void TestNumerics();
 void TestFiltering();
+void TestOperations();
 
 int main()
 {
@@ -28,6 +31,8 @@ int main()
 	TestNumerics();
 	std::cout << "\n...Filtering...\n\n";
 	TestFiltering();
+	std::cout << "\n...Operations...\n\n";
+	TestOperations();
 
 	return 0;
 }
@@ -299,4 +304,50 @@ void TestFiltering()
 		for (auto& v : filtered) std::cout << v.ToString() << std::ends;
 		std::cout << std::endl;
 	}
+}
+
+void TestOperations()
+{
+	size_t n = 80000000;
+	Vector v1(n);
+	Vector v2(n);
+	Vector v3;
+	Timer t;
+	double r;
+
+	for (size_t i = 0; i < n; ++i)
+	{
+		v1[i] = rand() % 100;
+		v2[i] = rand() % 100;
+	}
+
+	t.Start();
+	v3 = v1 + v2;
+	t.Stop();
+	std::cout << "usual: " << t.GetTime() << std::endl;
+	//std::cout << v3.ToString() << std::endl;
+	t.Start();
+	simd::AddVectors(v1, v2, v3);
+	t.Stop();
+	std::cout << "SIMD : " << t.GetTime() << std::endl;
+	//std::cout << v3.ToString() << std::endl;
+
+	t.Start();
+	v3 = v1 - v2;
+	t.Stop();
+	std::cout << "usual: " << t.GetTime() << std::endl;
+	t.Start();
+	simd::SubstractVectors(v1, v2, v3);
+	t.Stop();
+	std::cout << "SIMD : " << t.GetTime() << std::endl;
+
+	t.Start();
+	r = v1 * v2;
+	t.Stop();
+	std::cout << "usual: " << t.GetTime() << " " << r << std::endl;
+	t.Start();
+	r = simd::MultVectors(v1, v2);
+	t.Stop();
+	std::cout << "SIMD : " << t.GetTime() << " " << r << std::endl;
+
 }
